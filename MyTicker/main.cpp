@@ -76,16 +76,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 void Paint(HWND hwnd, LPCTSTR txt)
 {
-	UpdateWindow(hwnd);
 
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT rect;
 
-	hdc = BeginPaint(hwnd, &ps);
-
 	GetClientRect(hwnd, &rect);
 
+	InvalidateRect(hwnd, &rect, false);
+
+	hdc = BeginPaint(hwnd, &ps);
 	DrawText(hdc, txt, -1, &rect,
 		DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 	EndPaint(hwnd, &ps);
@@ -99,6 +99,7 @@ DWORD WINAPI ThreadFun(LPVOID lpParameter)
 	{
 		string dateStr = Ticker::GetCurrentTimeStr();
 		Paint(hwnd, dateStr.c_str());
+		Sleep(500);
 	}
 	return 0;
 }
@@ -115,6 +116,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 	case WM_PAINT:
+		Paint(hwnd, Ticker::GetCurrentTimeStr().c_str());
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
