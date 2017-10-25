@@ -1,0 +1,14 @@
+bin/*.exe
+bin/*.ilk
+bin/*.pdb
+bin/*.dll
+obj/
+x64/
+*.suo
+Debug/
+Release/
+Build/
+ipch/
+*.sdf
+/lib/*
+/ChatServer/bin
