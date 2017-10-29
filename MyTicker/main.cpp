@@ -10,6 +10,7 @@
 #define ClassName "SalamanderClock"
 #define WindowWidth  500
 #define WindowHeight 300
+#define IDT_TIMER 303
 
 
 
@@ -91,33 +92,26 @@ void Paint(HWND hwnd, LPCTSTR txt)
 	EndPaint(hwnd, &ps);
 }
 
-// Thread function
-DWORD WINAPI ThreadFun(LPVOID lpParameter)
-{
-	HWND hwnd = (HWND)lpParameter;
-	while (1)
-	{
-		string dateStr = Ticker::GetCurrentTimeStr();
-		Paint(hwnd, dateStr.c_str());
-		Sleep(500);
-	}
-	return 0;
-}
-
-
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (message)
 	{
 	case WM_CREATE:
 	{
-		CreateThread(NULL, 0, ThreadFun, hwnd, 0, NULL);
+		SetTimer(hwnd, IDT_TIMER, 1000, (TIMERPROC)NULL);
 	}
 	return 0;
 	case WM_PAINT:
 		Paint(hwnd, Ticker::GetCurrentTimeStr().c_str());
 		return 0;
+	case WM_TIMER:
+		switch (wParam)
+		{
+		case IDT_TIMER:
+			string dateStr = Ticker::GetCurrentTimeStr();
+			Paint(hwnd, dateStr.c_str());
+			return 0;
+		}
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
