@@ -16,6 +16,10 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
+HWND btn;
+const int btnID = 0x5;
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR szCmdLine, int iCmdShow)
 {
@@ -77,13 +81,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 void Paint(HWND hwnd, LPCTSTR txt)
 {
-
 	HDC hdc;
 	PAINTSTRUCT ps;
 	RECT rect;
 
 	GetClientRect(hwnd, &rect);
-
 	InvalidateRect(hwnd, &rect, false);
 
 	hdc = BeginPaint(hwnd, &ps);
@@ -92,13 +94,18 @@ void Paint(HWND hwnd, LPCTSTR txt)
 	EndPaint(hwnd, &ps);
 }
 
+void AddComponents(HWND hwnd)
+{
+	btn = CreateWindow(TEXT("BUTTON"), TEXT("开始显示时间"), WS_CHILD | WS_VISIBLE, 200, 150, 100, 40, hwnd, (HMENU)btnID, NULL, NULL);
+}
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
 	case WM_CREATE:
 	{
-		SetTimer(hwnd, IDT_TIMER, 1000, (TIMERPROC)NULL);
+		AddComponents(hwnd);
 	}
 	return 0;
 	case WM_PAINT:
@@ -112,6 +119,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Paint(hwnd, dateStr.c_str());
 			return 0;
 		}
+	case WM_COMMAND:
+		int iMID;
+		iMID = LOWORD(wParam);
+		switch (iMID)
+		{
+		case btnID:
+			SetTimer(hwnd, IDT_TIMER, 1000, (TIMERPROC)NULL);
+			break;
+		}
+		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
